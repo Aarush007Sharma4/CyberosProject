@@ -24,6 +24,7 @@ This was created as a first-year B.Tech C++ project inspired by Linux terminals 
 - [Windows EXE](https://github.com/Aarush007Sharma4/CyberosProject/blob/main/CyberOS_Nexus.exe)
 - [HTML Overlay](https://github.com/Aarush007Sharma4/CyberosProject/blob/main/CyberOS_Nexus_Imagination.html)
 - [Source Code](https://github.com/Aarush007Sharma4/CyberosProject/blob/main/CyberOS_Nexus.c)
+- in case of not downloading directly just click the above links click on raw or click the download button beside raw
 ---
 
 # Preview
