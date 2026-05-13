@@ -8,17 +8,22 @@
 CyberOS Nexus is a futuristic terminal-based cyber defence simulator built using C++.
 
 The project simulates:
-- authentication systems
-- brute force prevention
-- phishing detection
+- Authentication systems
+- Brute force prevention
+- Phishing detection
 - DDoS simulations
-- malware response
-- digital forensics
+- Malware response
+- Digital forensics
 - SOC monitoring
-- admin defence controls
+- Admin defence controls
 
 This was created as a first-year B.Tech C++ project inspired by Linux terminals and real Security Operations Centers (SOC).
 
+# Download Links :-
+
+- [Windows EXE](https://github.com/Aarush007Sharma4/CyberosProject/blob/main/CyberOS_Nexus.exe)
+- [HTML Overlay](https://github.com/Aarush007Sharma4/CyberosProject/blob/main/CyberOS_Nexus_Imagination.html)
+- [Source Code](https://github.com/Aarush007Sharma4/CyberosProject/blob/main/CyberOS_Nexus.c)
 ---
 
 # Preview
@@ -28,46 +33,46 @@ This was created as a first-year B.Tech C++ project inspired by Linux terminals 
 
 ## Dashboard
 Shows:
-- threat score
-- blocked IPs
-- defence stack
+- Threat score
+- Blocked IPs
+- Defence stack
 - AI verdict engine
 
 ![Dashboard](assets/dashboard.png)
 
 ## Authentication Portal
 Simulates:
-- failed login detection
-- cooldowns
-- account monitoring
-- brute force protection
+- Failed login detection
+- Cooldowns
+- Account monitoring
+- Brute force protection
 
 ![Authentication](assets/authentication.png)
 
 ## Attack Laboratory
 Simulates:
-- brute force attacks
-- phishing attacks
-- malware payloads
+- Brute force attacks
+- Phishing attacks
+- Malware payloads
 - DDoS traffic
 
 ![Attack Lab](assets/attacklab.png)
 
 ## Threat Intelligence Radar
 Displays:
-- monitored nodes
-- suspicious systems
-- attack timelines
-- active threats
+- Monitored nodes
+- Suspicious systems
+- Attack timelines
+- Active threats
 
 ![Radar](assets/radar.png)
 
 ## Forensics Lab
 Includes:
-- evidence analysis
-- chain of custody
-- hash fingerprinting
-- digital vault simulation
+- Evidence analysis
+- Chain of custody
+- Hash fingerprinting
+- Digital vault simulation
 
 ![Forensics](assets/forensics.png)
 
@@ -90,19 +95,19 @@ clear
 
 ## Admin Panel
 Administrative defence controls:
-- quarantine network
-- rotate keys
-- isolate host
-- restore defaults
+- Quarantine network
+- Rotate keys
+- Isolate host
+- Restore defaults
 
 ![Admin](assets/admin.png)
 
 ## Incident Report
 Generates a full defence report with:
-- threat statistics
-- event timeline
+- Threat statistics
+- Event timeline
 - AI verdict
-- export system
+- Export system
 
 ![Report](assets/report.png)
 
@@ -188,10 +193,10 @@ inside any browser.
 The overlay provides:
 - futuristic UI
 - Linux terminal vibe
-- threat radar
-- attack simulations
-- glassmorphism dashboard
-- interactive controls
+- Threat radar
+- Attack simulations
+- Glassmorphism dashboard
+- Interactive controls
 
 ---
 
