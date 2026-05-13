@@ -1,0 +1,1529 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CyberOS Nexus</title>
+
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+    --bg0:#020617;
+    --bg1:rgba(255,255,255,0.04);
+    --bg2:rgba(0,0,0,0.35);
+    --line:rgba(0,255,156,0.12);
+    --line2:rgba(148,163,184,0.10);
+    --text:#d1fae5;
+    --muted:#5eead4;
+    --green:#00ff9c;
+    --cyan:#38bdf8;
+    --yellow:#facc15;
+    --red:#ff4d6d;
+    --orange:#fb923c;
+    --shadow:0 18px 60px rgba(0,0,0,0.42);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+    font-family:'JetBrains Mono',monospace;
+    color:var(--text);
+    background:
+        radial-gradient(circle at top left,#0f172a 0%, #020617 38%),
+        radial-gradient(circle at bottom right,#052e16 0%, #000 48%);
+    overflow:hidden;
+}
+
+/* Ambient background */
+.bg{
+    position:fixed; inset:0;
+    z-index:-3;
+    overflow:hidden;
+}
+.bg::before{
+    content:"";
+    position:absolute; inset:-30%;
+    background:
+        radial-gradient(circle at 20% 20%, rgba(56,189,248,0.16), transparent 22%),
+        radial-gradient(circle at 80% 25%, rgba(0,255,156,0.12), transparent 20%),
+        radial-gradient(circle at 70% 80%, rgba(250,204,21,0.10), transparent 18%),
+        radial-gradient(circle at 30% 75%, rgba(255,77,109,0.12), transparent 18%);
+    filter:blur(40px);
+    animation: drift 16s ease-in-out infinite alternate;
+}
+.bg::after{
+    content:"";
+    position:absolute; inset:0;
+    background:
+        repeating-linear-gradient(to bottom,
+            rgba(255,255,255,0.03),
+            rgba(255,255,255,0.03) 1px,
+            transparent 1px,
+            transparent 4px);
+    opacity:.25;
+}
+@keyframes drift{
+    from{transform:translate3d(-2%, -1%, 0) scale(1)}
+    to{transform:translate3d(2%, 1%, 0) scale(1.04)}
+}
+
+/* Layout */
+.app{
+    display:flex;
+    height:100vh;
+}
+
+/* Sidebar */
+.sidebar{
+    width:284px;
+    flex-shrink:0;
+    border-right:1px solid var(--line);
+    background:rgba(255,255,255,0.035);
+    backdrop-filter:blur(18px);
+    box-shadow:var(--shadow);
+    display:flex;
+    flex-direction:column;
+    padding:22px 18px;
+    overflow:auto;
+}
+.brand{
+    padding:14px 14px 18px;
+    border:1px solid var(--line2);
+    background:rgba(0,0,0,0.18);
+    border-radius:22px;
+    margin-bottom:18px;
+}
+.brand .title{
+    font-size:24px;
+    font-weight:700;
+    letter-spacing:.8px;
+    color:var(--green);
+}
+.brand .subtitle{
+    margin-top:8px;
+    color:#8b9caf;
+    font-size:12px;
+    line-height:1.5;
+}
+.status-pills{
+    display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;
+}
+.pill{
+    font-size:10px;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid var(--line2);
+    color:#c8d4e0;
+    background:rgba(255,255,255,0.03);
+}
+.pill.ok{color:var(--green); border-color:rgba(0,255,156,0.18)}
+.pill.cyan{color:var(--cyan); border-color:rgba(56,189,248,0.18)}
+.pill.yellow{color:var(--yellow); border-color:rgba(250,204,21,0.18)}
+
+.nav{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+.nav-btn{
+    width:100%;
+    border:none;
+    border-radius:16px;
+    padding:14px 14px;
+    text-align:left;
+    cursor:pointer;
+    color:var(--text);
+    background:rgba(255,255,255,0.03);
+    border:1px solid rgba(255,255,255,0.06);
+    backdrop-filter:blur(14px);
+    transition:.18s ease;
+    font:inherit;
+}
+.nav-btn:hover,
+.nav-btn.active{
+    transform:translateX(6px);
+    background:rgba(0,255,156,0.08);
+    border-color:rgba(0,255,156,0.18);
+    box-shadow:0 0 0 1px rgba(0,255,156,0.05), 0 12px 24px rgba(0,0,0,0.18);
+}
+.nav-btn .small{
+    display:block;
+    margin-top:4px;
+    color:#7e8ca0;
+    font-size:11px;
+}
+
+/* Main */
+.main{
+    flex:1;
+    overflow:auto;
+    padding:22px;
+}
+.topbar{
+    display:flex;
+    gap:14px;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:18px;
+    padding:16px 18px;
+    border-radius:22px;
+    background:rgba(255,255,255,0.035);
+    border:1px solid var(--line2);
+    backdrop-filter:blur(16px);
+    box-shadow:var(--shadow);
+}
+.topbar .left{
+    display:flex; flex-direction:column; gap:5px;
+}
+.topbar .headline{
+    font-size:16px;
+    color:var(--green);
+    letter-spacing:.5px;
+}
+.topbar .subline{
+    font-size:12px;
+    color:#8ea1b9;
+}
+.topbar .right{
+    display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+}
+.clock, .chip{
+    padding:9px 12px;
+    border-radius:999px;
+    background:rgba(0,0,0,0.24);
+    border:1px solid rgba(255,255,255,0.06);
+    font-size:11px;
+    color:#d5e7e0;
+}
+.chip.good{color:var(--green)}
+.chip.warn{color:var(--yellow)}
+.chip.bad{color:var(--red)}
+
+.page{
+    display:none;
+    animation:pageIn .26s ease;
+}
+.page.active{display:block}
+@keyframes pageIn{
+    from{opacity:0;transform:translateY(8px)}
+    to{opacity:1;transform:translateY(0)}
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(12,1fr);
+    gap:16px;
+}
+
+.card, .panel{
+    border-radius:24px;
+    background:rgba(255,255,255,0.035);
+    border:1px solid rgba(255,255,255,0.08);
+    backdrop-filter:blur(18px);
+    box-shadow:var(--shadow);
+}
+
+.card{
+    padding:20px;
+    grid-column:span 3;
+    min-height:114px;
+}
+.card .label{
+    color:#8ea1b9;
+    font-size:12px;
+    margin-bottom:12px;
+}
+.card .value{
+    font-size:34px;
+    font-weight:700;
+    line-height:1;
+}
+.card .hint{
+    margin-top:12px;
+    font-size:11px;
+    color:#738296;
+}
+
+.panel{
+    padding:20px;
+    margin-bottom:16px;
+}
+.panel.full{grid-column:span 12}
+.panel.half{grid-column:span 6}
+.panel.third{grid-column:span 4}
+.panel.two-thirds{grid-column:span 8}
+
+.section-title{
+    font-size:20px;
+    color:var(--green);
+    margin-bottom:14px;
+    letter-spacing:.4px;
+}
+.section-note{
+    color:#8ea1b9;
+    font-size:12px;
+    line-height:1.7;
+    margin-bottom:14px;
+}
+
+/* forms */
+.input, .select{
+    width:100%;
+    padding:14px 15px;
+    margin-bottom:12px;
+    border-radius:16px;
+    border:1px solid rgba(0,255,156,0.14);
+    background:rgba(0,0,0,0.28);
+    color:var(--text);
+    outline:none;
+    font:inherit;
+}
+.input:focus, .select:focus{
+    border-color:rgba(56,189,248,0.35);
+    box-shadow:0 0 0 3px rgba(56,189,248,0.10);
+}
+.row{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+.row > *{flex:1; min-width:160px;}
+
+.btn{
+    border:none;
+    border-radius:14px;
+    padding:13px 16px;
+    cursor:pointer;
+    font:inherit;
+    font-weight:700;
+    transition:.18s ease;
+    background:rgba(0,255,156,0.92);
+    color:#02110c;
+}
+.btn:hover{transform:translateY(-2px); box-shadow:0 12px 25px rgba(0,255,156,0.16)}
+.btn.secondary{
+    background:rgba(255,255,255,0.06);
+    color:var(--text);
+    border:1px solid rgba(255,255,255,0.08);
+}
+.btn.danger{background:rgba(255,77,109,0.92); color:#fff}
+.btn.blue{background:rgba(56,189,248,0.92); color:#03111b}
+.btn.yellow{background:rgba(250,204,21,0.92); color:#161103}
+
+.toolbar{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:10px;
+}
+
+/* terminal */
+.terminal{
+    background:rgba(0,0,0,0.46);
+    border:1px solid rgba(0,255,156,0.10);
+    border-radius:18px;
+    min-height:270px;
+    max-height:320px;
+    overflow:auto;
+    padding:16px;
+}
+.term-line{
+    white-space:pre-wrap;
+    margin-bottom:9px;
+    font-size:13px;
+    line-height:1.6;
+}
+.prompt{
+    color:var(--green);
+}
+.dim{color:#7b8b9f}
+.cyan{color:var(--cyan)}
+.yellow{color:var(--yellow)}
+.red{color:var(--red)}
+.green{color:var(--green)}
+.orange{color:var(--orange)}
+
+/* bars */
+.bar{
+    height:14px;
+    width:100%;
+    border-radius:999px;
+    overflow:hidden;
+    background:rgba(255,255,255,0.07);
+}
+.fill{
+    height:100%;
+    width:20%;
+    border-radius:999px;
+    background:linear-gradient(90deg,var(--green),var(--yellow),var(--red));
+    transition:width .35s ease;
+}
+
+/* timeline */
+.timeline{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+.event{
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+    padding:14px 15px;
+    border-radius:16px;
+    background:rgba(0,0,0,0.24);
+    border:1px solid rgba(255,255,255,0.05);
+}
+.dot{
+    width:10px;height:10px;border-radius:50%;
+    margin-top:6px;
+    background:var(--green);
+    box-shadow:0 0 0 6px rgba(0,255,156,0.08);
+    flex-shrink:0;
+}
+.event.warn .dot{background:var(--yellow); box-shadow:0 0 0 6px rgba(250,204,21,0.09)}
+.event.bad .dot{background:var(--red); box-shadow:0 0 0 6px rgba(255,77,109,0.09)}
+.event .t{font-size:12px;color:#8ea1b9}
+.event .m{font-size:13px;line-height:1.6;color:var(--text); margin-top:3px}
+
+/* logs inside panels */
+.small-log{
+    display:grid;
+    gap:8px;
+}
+.small-log .line{
+    padding:10px 12px;
+    border-radius:14px;
+    background:rgba(255,255,255,0.03);
+    border:1px solid rgba(255,255,255,0.05);
+    font-size:12px;
+    color:#c7d5e2;
+}
+
+/* table */
+table{
+    width:100%;
+    border-collapse:collapse;
+    overflow:hidden;
+}
+th, td{
+    text-align:left;
+    padding:14px 12px;
+    border-bottom:1px solid rgba(255,255,255,0.06);
+    font-size:12px;
+}
+th{color:#8ea1b9; font-weight:600}
+
+/* radar */
+.radar{
+    position:relative;
+    height:320px;
+    border-radius:24px;
+    background:
+        radial-gradient(circle at center, rgba(0,255,156,0.05), transparent 35%),
+        rgba(0,0,0,0.24);
+    border:1px solid rgba(255,255,255,0.06);
+    overflow:hidden;
+}
+.radar::before, .radar::after{
+    content:"";
+    position:absolute;
+    inset:50%;
+    border-radius:50%;
+    transform:translate(-50%, -50%);
+    border:1px solid rgba(0,255,156,0.12);
+}
+.radar::before{width:120px;height:120px}
+.radar::after{width:220px;height:220px}
+.sweep{
+    position:absolute;
+    inset:0;
+    background:conic-gradient(from 0deg, transparent 0 30%, rgba(0,255,156,0.22) 50%, transparent 70% 100%);
+    animation:spin 4s linear infinite;
+    filter:blur(1px);
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.node{
+    position:absolute;
+    width:10px;height:10px;border-radius:50%;
+    background:var(--cyan);
+    box-shadow:0 0 0 7px rgba(56,189,248,0.08);
+    animation:pulse 2.4s infinite;
+}
+.node.red{background:var(--red); box-shadow:0 0 0 7px rgba(255,77,109,0.08)}
+.node.yellow{background:var(--yellow); box-shadow:0 0 0 7px rgba(250,204,21,0.08)}
+@keyframes pulse{
+    0%,100%{transform:scale(1)}
+    50%{transform:scale(1.25)}
+}
+
+/* command input */
+.command-box{
+    display:flex;
+    gap:10px;
+    margin-top:12px;
+}
+.command-box input{
+    flex:1;
+    margin:0;
+}
+
+/* toast */
+.toast{
+    position:fixed;
+    right:18px;
+    bottom:18px;
+    min-width:280px;
+    max-width:380px;
+    padding:14px 16px;
+    border-radius:18px;
+    background:rgba(0,0,0,0.58);
+    color:var(--text);
+    border:1px solid rgba(0,255,156,0.16);
+    backdrop-filter:blur(18px);
+    box-shadow:var(--shadow);
+    display:none;
+    z-index:50;
+}
+.toast.show{display:block; animation:toastIn .22s ease}
+@keyframes toastIn{
+    from{transform:translateY(14px); opacity:0}
+    to{transform:translateY(0); opacity:1}
+}
+
+/* responsive */
+@media (max-width: 1100px){
+    .card{grid-column:span 6}
+    .panel.half, .panel.third, .panel.two-thirds{grid-column:span 12}
+}
+@media (max-width: 860px){
+    body{overflow:auto}
+    .app{flex-direction:column}
+    .sidebar{width:100%; border-right:none; border-bottom:1px solid var(--line)}
+    .main{padding:16px}
+    .topbar{flex-direction:column; align-items:flex-start}
+    .card{grid-column:span 12}
+}
+</style>
+</head>
+
+<body>
+<div class="bg"></div>
+
+<div class="app">
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="title">CyberOS Nexus</div>
+            <div class="subtitle">A futuristic cyber defence lab with a Linux terminal soul.</div>
+            <div class="status-pills">
+                <span class="pill ok" id="pillSystem">ONLINE</span>
+                <span class="pill cyan" id="pillEngine">AI ACTIVE</span>
+                <span class="pill yellow" id="pillMode">DEFENCE MODE</span>
+            </div>
+        </div>
+
+        <div class="nav">
+            <button class="nav-btn active" onclick="openPage('dashboard', this)">
+                🏠 Dashboard
+                <span class="small">Metrics, security state, live alerts</span>
+            </button>
+            <button class="nav-btn" onclick="openPage('auth', this)">
+                🔐 Authentication
+                <span class="small">Login flow, brute force lockouts, CAPTCHA</span>
+            </button>
+            <button class="nav-btn" onclick="openPage('attack', this)">
+                ⚔ Attack Lab
+                <span class="small">Brute force, phishing, malware, DDoS</span>
+            </button>
+            <button class="nav-btn" onclick="openPage('intel', this)">
+                🌍 Threat Intelligence
+                <span class="small">Radar, IPs, activity, country map</span>
+            </button>
+            <button class="nav-btn" onclick="openPage('forensics', this)">
+                🧪 Forensics Lab
+                <span class="small">Hashes, suspicious traces, evidence</span>
+            </button>
+            <button class="nav-btn" onclick="openPage('console', this)">
+                🖥 Command Console
+                <span class="small">Type commands like a real analyst</span>
+            </button>
+            <button class="nav-btn" onclick="openPage('admin', this)">
+                🛠 Admin Panel
+                <span class="small">Unlock, quarantine, isolate, reset</span>
+            </button>
+            <button class="nav-btn" onclick="openPage('report', this)">
+                📄 Incident Report
+                <span class="small">Timeline, playbook, final verdict</span>
+            </button>
+        </div>
+    </aside>
+
+    <main class="main">
+        <div class="topbar">
+            <div class="left">
+                <div class="headline" id="headline">CyberOS Nexus / Secure Operations</div>
+                <div class="subline" id="subline">A living simulation of a modern defence stack.</div>
+            </div>
+            <div class="right">
+                <div class="clock" id="clock">--:--:--</div>
+                <div class="chip good" id="chipThreat">THREAT: LOW</div>
+                <div class="chip" id="chipState">3 DEFENCES ONLINE</div>
+            </div>
+        </div>
+
+        <!-- DASHBOARD -->
+        <section class="page active" id="dashboard">
+            <div class="grid">
+                <div class="card">
+                    <div class="label">Total Requests</div>
+                    <div class="value green" id="statRequests">148</div>
+                    <div class="hint">All monitored network actions</div>
+                </div>
+                <div class="card">
+                    <div class="label">Blocked IPs</div>
+                    <div class="value red" id="statBlocked">6</div>
+                    <div class="hint">Rate limits + manual blocks</div>
+                </div>
+                <div class="card">
+                    <div class="label">Threat Score</div>
+                    <div class="value yellow" id="statThreat">18</div>
+                    <div class="hint">AI-derived risk indicator</div>
+                </div>
+                <div class="card">
+                    <div class="label">Active Incidents</div>
+                    <div class="value cyan" id="statIncidents">2</div>
+                    <div class="hint">Open cases requiring attention</div>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div class="panel two-thirds">
+                    <div class="section-title">Live Terminal</div>
+                    <div class="section-note">A Linux-style monitoring stream. Every event updates in real time.</div>
+                    <div class="terminal" id="dashboardTerminal"></div>
+                    <div class="toolbar">
+                        <button class="btn blue" onclick="addBurstLog()">Generate Event Burst</button>
+                        <button class="btn secondary" onclick="clearTerminal('dashboardTerminal')">Clear Terminal</button>
+                        <button class="btn yellow" onclick="showToast('Live feed refreshed from the security core.')">Refresh Feed</button>
+                    </div>
+                </div>
+
+                <div class="panel third">
+                    <div class="section-title">Defence Stack</div>
+                    <div class="section-note">The control surface reacts to failures and attack patterns.</div>
+                    <div class="small-log" id="defenceLog"></div>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div class="panel full">
+                    <div class="section-title">Threat Pressure</div>
+                    <div class="section-note">Higher bar means higher pressure. It rises with failed logins and attack attempts.</div>
+                    <div class="bar"><div class="fill" id="threatBar"></div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AUTH -->
+        <section class="page" id="auth">
+            <div class="grid">
+                <div class="panel half">
+                    <div class="section-title">Authentication Portal</div>
+                    <div class="section-note">Try valid credentials or push the system into lockout behaviour.</div>
+                    <input class="input" id="authUser" placeholder="Username (admin / user1 / guest)" />
+                    <input class="input" type="password" id="authPass" placeholder="Password" />
+                    <div class="row">
+                        <button class="btn" onclick="login()">Authenticate</button>
+                        <button class="btn secondary" onclick="triggerCaptcha()">Trigger CAPTCHA</button>
+                        <button class="btn danger" onclick="forceLock()">Force Lockout</button>
+                    </div>
+                    <div class="toolbar">
+                        <button class="btn blue" onclick="resetAuth()">Reset Attempts</button>
+                        <button class="btn secondary" onclick="clearTerminal('authTerminal')">Clear Logs</button>
+                    </div>
+                    <div class="terminal" id="authTerminal"></div>
+                </div>
+
+                <div class="panel half">
+                    <div class="section-title">Account State</div>
+                    <div class="section-note">This mirrors what a SOC analyst would view during suspicious login activity.</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Status</th>
+                                <th>Fails</th>
+                                <th>Cooldown</th>
+                            </tr>
+                        </thead>
+                        <tbody id="accountTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ATTACK -->
+        <section class="page" id="attack">
+            <div class="grid">
+                <div class="panel half">
+                    <div class="section-title">Attack Laboratory</div>
+                    <div class="section-note">Run safe simulations to demonstrate how defence controls respond.</div>
+                    <div class="row">
+                        <select class="select" id="atkTarget">
+                            <option value="admin">Target: admin</option>
+                            <option value="user1">Target: user1</option>
+                            <option value="guest">Target: guest</option>
+                        </select>
+                        <select class="select" id="atkMode">
+                            <option value="brute">Mode: Brute Force</option>
+                            <option value="phish">Mode: Phishing</option>
+                            <option value="ddos">Mode: DDoS</option>
+                            <option value="malware">Mode: Malware Dropper</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <button class="btn" onclick="runAttack()">Launch Simulation</button>
+                        <button class="btn secondary" onclick="pauseAttack()">Pause / Resume</button>
+                        <button class="btn danger" onclick="stopAttack()">Stop</button>
+                    </div>
+                    <div class="toolbar">
+                        <button class="btn blue" onclick="addAttackWave()">Wave Burst</button>
+                        <button class="btn yellow" onclick="escalateAttack()">Escalate Threat</button>
+                    </div>
+                    <div class="terminal" id="attackTerminal"></div>
+                </div>
+
+                <div class="panel half">
+                    <div class="section-title">Attack Heat</div>
+                    <div class="section-note">The simulation uses a fake but convincing analysis of the current pressure.</div>
+                    <div class="bar"><div class="fill" id="attackBar"></div></div>
+                    <div class="toolbar" style="margin-top:16px">
+                        <span class="chip" id="attackState">IDLE</span>
+                        <span class="chip bad" id="attackIPs">0 SPOOFED IPS</span>
+                    </div>
+                    <div class="section-title" style="margin-top:20px">Live Payload Feed</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Vector</th>
+                                <th>Status</th>
+                                <th>Severity</th>
+                            </tr>
+                        </thead>
+                        <tbody id="payloadTable">
+                            <tr><td>Brute Force</td><td class="green">Blocked</td><td>Low</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- INTEL -->
+        <section class="page" id="intel">
+            <div class="grid">
+                <div class="panel half">
+                    <div class="section-title">Global Threat Radar</div>
+                    <div class="section-note">A cinematic radar map with moving sweep, clusters, and hotspots.</div>
+                    <div class="radar" id="radar">
+                        <div class="sweep"></div>
+                        <div class="node" style="left:18%; top:25%"></div>
+                        <div class="node red" style="left:72%; top:22%"></div>
+                        <div class="node yellow" style="left:49%; top:58%"></div>
+                        <div class="node" style="left:63%; top:73%"></div>
+                        <div class="node red" style="left:26%; top:68%"></div>
+                        <div class="node yellow" style="left:80%; top:56%"></div>
+                    </div>
+                </div>
+
+                <div class="panel half">
+                    <div class="section-title">Threat Map</div>
+                    <div class="section-note">Each region is a fictional telemetry snapshot for presentation impact.</div>
+                    <div class="grid" style="gap:12px">
+                        <div class="card" style="grid-column:span 4; min-height:auto"><div class="label">North America</div><div class="value red" style="font-size:22px">High</div></div>
+                        <div class="card" style="grid-column:span 4; min-height:auto"><div class="label">Europe</div><div class="value yellow" style="font-size:22px">Medium</div></div>
+                        <div class="card" style="grid-column:span 4; min-height:auto"><div class="label">Asia</div><div class="value green" style="font-size:22px">Stable</div></div>
+                        <div class="card" style="grid-column:span 4; min-height:auto"><div class="label">Africa</div><div class="value yellow" style="font-size:22px">Watch</div></div>
+                        <div class="card" style="grid-column:span 4; min-height:auto"><div class="label">South America</div><div class="value red" style="font-size:22px">Spike</div></div>
+                        <div class="card" style="grid-column:span 4; min-height:auto"><div class="label">Oceania</div><div class="value green" style="font-size:22px">Calm</div></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FORENSICS -->
+        <section class="page" id="forensics">
+            <div class="grid">
+                <div class="panel half">
+                    <div class="section-title">Digital Forensics Lab</div>
+                    <div class="section-note">Inspect evidence, hash fingerprints, and suspicious traces.</div>
+                    <div class="row">
+                        <input class="input" id="evidence" placeholder="Type an artifact: email, file, IP, token..." />
+                    </div>
+                    <div class="row">
+                        <button class="btn" onclick="analyzeEvidence()">Analyze Artifact</button>
+                        <button class="btn secondary" onclick="hashArtifact()">Hash Artifact</button>
+                        <button class="btn blue" onclick="sealEvidence()">Seal Evidence</button>
+                    </div>
+                    <div class="terminal" id="forensicTerminal"></div>
+                </div>
+
+                <div class="panel half">
+                    <div class="section-title">Incident Timeline</div>
+                    <div class="section-note">A narrative timeline makes your presentation feel like a real investigation.</div>
+                    <div class="timeline" id="timeline"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONSOLE -->
+        <section class="page" id="console">
+            <div class="grid">
+                <div class="panel full">
+                    <div class="section-title">Command Console</div>
+                    <div class="section-note">Type commands like you are inside a security appliance. Try: help, status, scan, lockdown, report, clear, ping, unlock.</div>
+                    <div class="terminal" id="consoleTerminal"></div>
+                    <div class="command-box">
+                        <input class="input" id="cmdInput" placeholder="cyberos> type a command..." />
+                        <button class="btn" onclick="runCommand()">Run</button>
+                        <button class="btn secondary" onclick="clearTerminal('consoleTerminal')">Clear</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ADMIN -->
+        <section class="page" id="admin">
+            <div class="grid">
+                <div class="panel half">
+                    <div class="section-title">Administrative Controls</div>
+                    <div class="section-note">Emergency actions for the simulated SOC. All buttons perform live changes.</div>
+                    <div class="row">
+                        <button class="btn" onclick="unlockAll()">Unlock Accounts</button>
+                        <button class="btn danger" onclick="quarantineNetwork()">Quarantine Network</button>
+                    </div>
+                    <div class="row">
+                        <button class="btn blue" onclick="rotateKeys()">Rotate Keys</button>
+                        <button class="btn yellow" onclick="isolateHost()">Isolate Host</button>
+                    </div>
+                    <div class="row">
+                        <button class="btn secondary" onclick="clearAlerts()">Clear Alerts</button>
+                        <button class="btn secondary" onclick="restoreDefaults()">Restore Defaults</button>
+                    </div>
+                    <div class="terminal" id="adminTerminal"></div>
+                </div>
+
+                <div class="panel half">
+                    <div class="section-title">Policy Controls</div>
+                    <div class="section-note">These sliders are visual in spirit, but the buttons below change system state instantly.</div>
+                    <div class="small-log" id="policyLog"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- REPORT -->
+        <section class="page" id="report">
+            <div class="grid">
+                <div class="panel full">
+                    <div class="section-title">Incident Report</div>
+                    <div class="section-note">This summarises the simulated incident in a neat presentation-ready format.</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Event</th>
+                                <th>State</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reportTable"></tbody>
+                    </table>
+
+                    <div class="toolbar" style="margin-top:18px">
+                        <button class="btn" onclick="refreshReport()">Refresh Report</button>
+                        <button class="btn blue" onclick="runAIReview()">AI Review</button>
+                        <button class="btn secondary" onclick="exportReport()">Export Summary</button>
+                    </div>
+
+                    <div class="terminal" id="reportTerminal"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const state = {
+    page: 'dashboard',
+    total: 148,
+    blocked: 6,
+    threat: 18,
+    incidents: 2,
+    attackHeat: 24,
+    systemMode: 'DEFENCE MODE',
+    aiMode: true,
+    attackRunning: false,
+    attackPaused: false,
+    spoofedIps: 0,
+    currentAttack: null,
+    logs: {
+        dashboardTerminal: [],
+        authTerminal: [],
+        attackTerminal: [],
+        forensicTerminal: [],
+        consoleTerminal: [],
+        adminTerminal: [],
+        reportTerminal: []
+    },
+    accounts: {
+        admin: {fails: 0, locked: false, captcha: false, cooldown: 0},
+        user1: {fails: 1, locked: false, captcha: false, cooldown: 0},
+        guest: {fails: 0, locked: false, captcha: false, cooldown: 0}
+    },
+    timeline: [
+        {type:'warn', time:'08:14', title:'Suspicious login burst', msg:'Repeated login attempts detected from multiple regions.'},
+        {type:'bad', time:'08:21', title:'Attack vector escalated', msg:'Simulation shifted into distributed attack pattern.'},
+        {type:'', time:'08:29', title:'Defence layer responded', msg:'Rate limiting and CAPTCHA controls remained active.'}
+    ]
+};
+
+const terminals = ['dashboardTerminal','authTerminal','attackTerminal','forensicTerminal','consoleTerminal','adminTerminal','reportTerminal'];
+
+function loadSaved() {
+    try {
+        const saved = JSON.parse(localStorage.getItem('cyberos_nexus_state') || 'null');
+        if (saved) {
+            Object.assign(state, saved);
+        }
+    } catch (e) {}
+}
+function saveState() {
+    try { localStorage.setItem('cyberos_nexus_state', JSON.stringify({
+        total: state.total,
+        blocked: state.blocked,
+        threat: state.threat,
+        incidents: state.incidents,
+        attackHeat: state.attackHeat,
+        systemMode: state.systemMode,
+        aiMode: state.aiMode,
+        attackRunning: false,
+        attackPaused: false,
+        spoofedIps: state.spoofedIps,
+        logs: state.logs,
+        accounts: state.accounts,
+        timeline: state.timeline
+    })); } catch (e) {}
+}
+function boot() {
+    loadSaved();
+    renderAll();
+    syncTopbar();
+    if (!state.logs.dashboardTerminal.length) {
+        pushLog('dashboardTerminal', 'root@cyberos:~$ boot sequence complete');
+        pushLog('dashboardTerminal', 'root@cyberos:~$ defence stack online: IP limit / backoff / captcha');
+        pushLog('dashboardTerminal', 'root@cyberos:~$ ai monitor active');
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+    setInterval(randomPulse, 4500);
+    setInterval(() => {
+        if (state.page === 'dashboard') pushLog('dashboardTerminal', randomDashboardLine(), 'dim');
+    }, 3800);
+    setInterval(() => {
+        syncThreat();
+        renderAll();
+        saveState();
+    }, 800);
+}
+function updateClock() {
+    const now = new Date();
+    document.getElementById('clock').textContent = now.toLocaleTimeString();
+}
+function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(window.__toastTimer);
+    window.__toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+}
+function openPage(id, btn) {
+    state.page = id;
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const map = {
+        dashboard:['Secure Operations / Main View','The defence stack is watching in real time.'],
+        auth:['Authentication / Access Control','Login flows, lockouts, CAPTCHA and account state.'],
+        attack:['Attack Lab / Red Team Simulation','Safe cyber attack demos for presentation and learning.'],
+        intel:['Threat Intelligence / Global View','Radar and geo telemetry from the fictional security mesh.'],
+        forensics:['Forensics Lab / Evidence Analysis','Turn raw artifacts into readable findings.'],
+        console:['Command Console / Analyst Shell','A Linux-flavoured command experience.'],
+        admin:['Admin Panel / Emergency Controls','Containment actions for an active incident.'],
+        report:['Incident Report / Executive Summary','Final verdict and presentation-ready incident story.']
+    };
+    document.getElementById('headline').textContent = map[id][0];
+    document.getElementById('subline').textContent = map[id][1];
+    showToast(`Opened ${map[id][0]}`);
+    renderAll();
+}
+function pushLog(term, text, tone='green') {
+    const line = { text, tone, time: new Date().toLocaleTimeString() };
+    state.logs[term].push(line);
+    if (state.logs[term].length > 80) state.logs[term].shift();
+    renderTerminal(term);
+}
+function renderTerminal(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = state.logs[id].map(item => {
+        const cls = item.tone === 'red' ? 'red' : item.tone === 'yellow' ? 'yellow' : item.tone === 'cyan' ? 'cyan' : item.tone === 'dim' ? 'dim' : 'green';
+        return `<div class="term-line ${cls}">${escapeHtml(item.text)}</div>`;
+    }).join('');
+    el.scrollTop = el.scrollHeight;
+}
+function clearTerminal(id) {
+    state.logs[id] = [];
+    renderTerminal(id);
+    showToast(`Cleared ${id}`);
+}
+function escapeHtml(s) {
+    return String(s).replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+}
+function randomDashboardLine() {
+    const lines = [
+        'packet stream stable',
+        'ai classifier is ranking anomalies',
+        'firewall rule set synced',
+        'new telemetry from gateway node',
+        'login entropy remains within safe bounds',
+        'background scan completed',
+        'threat intel feed updated'
+    ];
+    return `root@cyberos:~$ ${lines[Math.floor(Math.random()*lines.length)]}`;
+}
+function syncTopbar() {
+    document.getElementById('chipThreat').textContent = `THREAT: ${state.threat < 20 ? 'LOW' : state.threat < 50 ? 'MEDIUM' : 'HIGH'}`;
+    document.getElementById('chipThreat').className = `chip ${state.threat < 20 ? 'good' : state.threat < 50 ? 'warn' : 'bad'}`;
+    document.getElementById('chipState').textContent = `${state.systemMode} / ${state.aiMode ? 'AI ON' : 'AI OFF'}`;
+    document.getElementById('pillSystem').textContent = 'ONLINE';
+    document.getElementById('pillEngine').textContent = state.aiMode ? 'AI ACTIVE' : 'AI OFF';
+    document.getElementById('pillMode').textContent = state.systemMode;
+}
+function syncThreat() {
+    document.getElementById('statRequests').textContent = state.total;
+    document.getElementById('statBlocked').textContent = state.blocked;
+    document.getElementById('statThreat').textContent = state.threat;
+    document.getElementById('statIncidents').textContent = state.incidents;
+    const bar = document.getElementById('threatBar');
+    const pct = Math.min(100, state.threat * 4);
+    bar.style.width = Math.max(8, pct) + '%';
+    bar.style.background = state.threat < 20 ? 'linear-gradient(90deg,#00ff9c,#38bdf8)' : state.threat < 50 ? 'linear-gradient(90deg,#38bdf8,#facc15)' : 'linear-gradient(90deg,#facc15,#ff4d6d)';
+    document.getElementById('attackBar').style.width = Math.min(100, state.attackHeat) + '%';
+    document.getElementById('attackIPs').textContent = `${state.spoofedIps} SPOOFED IPS`;
+    document.getElementById('attackState').textContent = state.attackRunning ? (state.attackPaused ? 'PAUSED' : 'RUNNING') : 'IDLE';
+    renderAccounts();
+    renderDefenceLog();
+    renderTimeline();
+    renderReport();
+    syncTopbar();
+}
+function renderAccounts() {
+    const body = document.getElementById('accountTable');
+    body.innerHTML = Object.entries(state.accounts).map(([u, a]) => {
+        const status = a.locked ? 'LOCKED' : a.captcha ? 'CAPTCHA' : a.cooldown > 0 ? 'COOLDOWN' : a.fails >= 3 ? 'SUSPICIOUS' : 'SECURE';
+        const cls = a.locked ? 'red' : a.captcha || a.cooldown > 0 || a.fails >= 3 ? 'yellow' : 'green';
+        return `<tr>
+            <td>${u}</td>
+            <td class="${cls}">${status}</td>
+            <td>${a.fails}</td>
+            <td>${a.cooldown > 0 ? a.cooldown + 's' : '-'}</td>
+        </tr>`;
+    }).join('');
+}
+function renderDefenceLog() {
+    const host = document.getElementById('defenceLog');
+    host.innerHTML = [
+        `<div class="line">IP rate limit: ${state.blocked > 0 ? 'engaged' : 'ready'}</div>`,
+        `<div class="line">Exponential backoff: ${Object.values(state.accounts).some(a => a.cooldown > 0) ? 'active' : 'standing by'}</div>`,
+        `<div class="line">CAPTCHA: ${Object.values(state.accounts).some(a => a.captcha) ? 'required' : 'idle'}</div>`,
+        `<div class="line">AI anomaly detector: ${state.aiMode ? 'watching' : 'offline'}</div>`
+    ].join('');
+}
+function renderTimeline() {
+    const host = document.getElementById('timeline');
+    host.innerHTML = state.timeline.map(ev => `
+        <div class="event ${ev.type}">
+            <div class="dot"></div>
+            <div>
+                <div class="t">${ev.time} • ${escapeHtml(ev.title)}</div>
+                <div class="m">${escapeHtml(ev.msg)}</div>
+            </div>
+        </div>
+    `).join('');
+}
+function renderReport() {
+    const body = document.getElementById('reportTable');
+    body.innerHTML = [
+        ['Brute force', state.threat > 30 ? 'Contained' : 'Monitored', 'Password failure sequence and lockout controls'],
+        ['Phishing', state.incidents > 1 ? 'Flagged' : 'Prepared', 'User awareness and bait detection'],
+        ['DDoS', state.blocked > 3 ? 'Mitigated' : 'Watchlist', 'Traffic shaping and IP blocking'],
+        ['Malware', state.aiMode ? 'Scanned' : 'Disabled', 'Static detection and behaviour heuristics']
+    ].map(([a,b,c]) => `<tr><td>${a}</td><td class="${b === 'Contained' || b === 'Scanned' ? 'green' : b === 'Flagged' ? 'red' : 'yellow'}">${b}</td><td>${c}</td></tr>`).join('');
+    document.getElementById('reportTerminal').innerHTML = [
+        `<div class="term-line green">incident summary ready</div>`,
+        `<div class="term-line dim">total requests: ${state.total}</div>`,
+        `<div class="term-line dim">blocked ip count: ${state.blocked}</div>`,
+        `<div class="term-line dim">threat score: ${state.threat}</div>`,
+        `<div class="term-line dim">active incidents: ${state.incidents}</div>`
+    ].join('');
+}
+function renderAll() {
+    terminals.forEach(renderTerminal);
+    renderAccounts();
+    renderDefenceLog();
+    renderTimeline();
+    renderReport();
+    syncThreat();
+}
+
+/* AUTH */
+function login() {
+    const u = document.getElementById('authUser').value.trim();
+    const p = document.getElementById('authPass').value;
+    if (!u || !p) {
+        pushLog('authTerminal', 'root@cyberos:~$ input error: missing credentials', 'yellow');
+        state.threat += 2;
+        state.total += 1;
+        return;
+    }
+    state.total += 1;
+    pushLog('authTerminal', `root@cyberos:~$ authenticating ${u}`, 'cyan');
+    const acc = state.accounts[u];
+    if (!acc) {
+        pushLog('authTerminal', 'root@cyberos:~$ user not found', 'red');
+        state.threat += 4;
+        addTimeline('bad', 'User lookup failure', `Invalid account lookup attempt for ${u}.`);
+        showToast('Unknown user rejected.');
+        return;
+    }
+    if (acc.locked) {
+        pushLog('authTerminal', 'root@cyberos:~$ account locked', 'red');
+        state.threat += 3;
+        addTimeline('bad', 'Locked account hit', `Attempt against locked account ${u}.`);
+        return;
+    }
+    if (acc.cooldown > 0) {
+        pushLog('authTerminal', `root@cyberos:~$ backoff active (${acc.cooldown}s)`, 'yellow');
+        state.threat += 1;
+        return;
+    }
+    const valid = (u === 'admin' && p === 'Admin@123') || (u === 'user1' && p === 'User@123') || (u === 'guest' && p === 'Guest@123');
+    if (valid) {
+        acc.fails = 0;
+        acc.captcha = false;
+        acc.cooldown = 0;
+        pushLog('authTerminal', `root@cyberos:~$ access granted -> ${u}`, 'green');
+        state.threat = Math.max(10, state.threat - 3);
+        state.incidents = Math.max(0, state.incidents - 1);
+        addTimeline('', 'Successful login', `Credential check passed for ${u}.`);
+        showToast(`Welcome ${u}. Access granted.`);
+    } else {
+        acc.fails += 1;
+        state.threat += 7;
+        state.incidents += 1;
+        pushLog('authTerminal', `root@cyberos:~$ authentication failed (${acc.fails}/4)`, 'red');
+        if (acc.fails >= 3) {
+            acc.captcha = true;
+            acc.cooldown = Math.min(45, acc.fails * 5);
+            pushLog('authTerminal', 'root@cyberos:~$ captcha required on next attempt', 'yellow');
+            addTimeline('warn', 'CAPTCHA triggered', `Suspicious activity escalated for ${u}.`);
+            showToast('CAPTCHA has been triggered.');
+        }
+        if (acc.fails >= 4) {
+            acc.locked = true;
+            pushLog('authTerminal', 'root@cyberos:~$ account locked', 'red');
+            addTimeline('bad', 'Account locked', `Lockout applied to ${u}.`);
+        }
+    }
+    renderAll();
+    saveState();
+}
+function triggerCaptcha() {
+    const u = document.getElementById('authUser').value.trim() || 'admin';
+    if (state.accounts[u]) {
+        state.accounts[u].captcha = true;
+        state.accounts[u].cooldown = 12;
+        pushLog('authTerminal', `root@cyberos:~$ captcha manually triggered for ${u}`, 'yellow');
+        addTimeline('warn', 'Manual CAPTCHA trigger', `Security analyst forced a challenge for ${u}.`);
+        state.threat += 4;
+        renderAll();
+        saveState();
+    }
+}
+function forceLock() {
+    const u = document.getElementById('authUser').value.trim() || 'admin';
+    if (state.accounts[u]) {
+        state.accounts[u].locked = true;
+        state.accounts[u].cooldown = 0;
+        pushLog('authTerminal', `root@cyberos:~$ forced lockout: ${u}`, 'red');
+        addTimeline('bad', 'Forced lockout', `Administrator disabled ${u}.`);
+        state.blocked += 1;
+        state.threat += 8;
+        renderAll();
+        saveState();
+    }
+}
+function resetAuth() {
+    Object.values(state.accounts).forEach(a => { a.fails = 0; a.locked = false; a.captcha = false; a.cooldown = 0; });
+    pushLog('authTerminal', 'root@cyberos:~$ all auth attempts reset', 'green');
+    showToast('Authentication counters reset.');
+    addTimeline('', 'Reset executed', 'All account attempts were cleared.');
+    state.threat = Math.max(8, state.threat - 6);
+    renderAll();
+    saveState();
+}
+
+/* ATTACK LAB */
+function runAttack() {
+    if (state.attackRunning) return;
+    const target = document.getElementById('atkTarget').value;
+    const mode = document.getElementById('atkMode').value;
+    state.attackRunning = true;
+    state.attackPaused = false;
+    state.currentAttack = { target, mode, step: 0 };
+    state.spoofedIps = 3;
+    pushLog('attackTerminal', `root@cyberos:~$ launching ${mode} simulation against ${target}`, 'cyan');
+    addTimeline('warn', 'Attack simulation started', `${mode.toUpperCase()} against ${target}.`);
+    attackLoop();
+}
+function attackLoop() {
+    if (!state.attackRunning) return;
+    if (state.attackPaused) {
+        setTimeout(attackLoop, 300);
+        return;
+    }
+    const { target, mode } = state.currentAttack;
+    const vectors = {
+        brute: ['password', 'admin123', 'letmein', 'guest123', 'Admin@123'],
+        phish: ['fake login page', 'credential form', 'malicious redirect', 'stolen token'],
+        ddos: ['bot wave', 'traffic flood', 'syn surge', 'rate limit trigger'],
+        malware: ['payload drop', 'macro lure', 'sandbox evasion', 'persistence attempt']
+    };
+    const payloads = vectors[mode];
+    const item = payloads[state.currentAttack.step % payloads.length];
+    pushLog('attackTerminal', `root@cyberos:~$ [${mode}] ${item} -> ${target}`, state.currentAttack.step % 2 ? 'yellow' : 'green');
+    state.attackHeat = Math.min(100, state.attackHeat + 9);
+    state.threat = Math.min(100, state.threat + 4);
+    state.total += 2;
+    if (mode === 'ddos') state.blocked += 1;
+    if (mode === 'phish') state.incidents += 1;
+    if (mode === 'malware') state.incidents += 2;
+    updatePayloadTable(mode, item);
+    if (state.currentAttack.step % 3 === 0) {
+        addTimeline('warn', 'Threat cluster detected', `${mode.toUpperCase()} activity with ${item}.`);
+    }
+    state.currentAttack.step += 1;
+    renderAll();
+    saveState();
+    if (state.currentAttack.step > 7) {
+        pushLog('attackTerminal', 'root@cyberos:~$ simulation complete, defence layers held', 'red');
+        state.attackRunning = false;
+        state.attackPaused = false;
+        state.attackHeat = Math.max(18, state.attackHeat - 14);
+        addTimeline('', 'Attack contained', `Simulation on ${target} finished and was contained.`);
+        showToast('Attack simulation completed.');
+        renderAll();
+        saveState();
+        return;
+    }
+    setTimeout(attackLoop, 650);
+}
+function pauseAttack() {
+    if (!state.attackRunning) {
+        showToast('No running attack to pause.');
+        return;
+    }
+    state.attackPaused = !state.attackPaused;
+    pushLog('attackTerminal', state.attackPaused ? 'root@cyberos:~$ attack paused' : 'root@cyberos:~$ attack resumed', 'yellow');
+    showToast(state.attackPaused ? 'Attack paused.' : 'Attack resumed.');
+    renderAll();
+}
+function stopAttack() {
+    if (!state.attackRunning) {
+        showToast('No active simulation.');
+        return;
+    }
+    state.attackRunning = false;
+    state.attackPaused = false;
+    state.attackHeat = Math.max(16, state.attackHeat - 10);
+    pushLog('attackTerminal', 'root@cyberos:~$ attack halted by operator', 'red');
+    addTimeline('bad', 'Attack stopped', 'Operator terminated the simulation.');
+    renderAll();
+    saveState();
+}
+function addAttackWave() {
+    state.attackHeat = Math.min(100, state.attackHeat + 12);
+    state.total += 3;
+    state.blocked += 1;
+    pushLog('attackTerminal', 'root@cyberos:~$ wave burst: distributed traffic spike detected', 'yellow');
+    updatePayloadTable('ddos', 'wave burst');
+    addTimeline('warn', 'Wave burst', 'Distributed traffic wave simulated.');
+    renderAll();
+    saveState();
+}
+function escalateAttack() {
+    state.attackHeat = Math.min(100, state.attackHeat + 18);
+    state.threat = Math.min(100, state.threat + 10);
+    state.incidents += 1;
+    state.blocked += 1;
+    pushLog('attackTerminal', 'root@cyberos:~$ escalation: secondary payload injected', 'red');
+    updatePayloadTable('malware', 'secondary payload');
+    addTimeline('bad', 'Escalation event', 'Secondary payload injected into simulation.');
+    renderAll();
+    saveState();
+}
+function updatePayloadTable(mode, msg) {
+    const body = document.getElementById('payloadTable');
+    const rows = [
+        ['Brute Force', mode === 'brute' ? 'Detected' : 'Blocked', mode === 'brute' ? 'High' : 'Low'],
+        ['Phishing', mode === 'phish' ? 'Detected' : 'Monitored', mode === 'phish' ? 'High' : 'Medium'],
+        ['DDoS', mode === 'ddos' ? 'Flooded' : 'Mitigated', mode === 'ddos' ? 'High' : 'Low'],
+        ['Malware', mode === 'malware' ? 'Quarantined' : 'Scanned', mode === 'malware' ? 'High' : 'Low']
+    ];
+    body.innerHTML = rows.map(([a,b,c]) => `<tr><td>${a}</td><td class="${b === 'Mitigated' || b === 'Blocked' || b === 'Scanned' ? 'green' : b === 'Detected' || b === 'Flooded' || b === 'Quarantined' ? 'red' : 'yellow'}">${b}</td><td>${c}</td></tr>`).join('');
+}
+
+/* INTEL / TIMELINE */
+function randomPulse() {
+    if (state.page !== 'intel' && state.page !== 'dashboard') return;
+    const x = Math.floor(Math.random()*90) + 5;
+    const y = Math.floor(Math.random()*80) + 10;
+    const node = document.createElement('div');
+    node.className = 'node ' + (Math.random() > 0.75 ? 'red' : Math.random() > 0.55 ? 'yellow' : '');
+    node.style.left = x + '%';
+    node.style.top = y + '%';
+    node.style.opacity = '0.8';
+    const radar = document.getElementById('radar');
+    if (radar) {
+        radar.appendChild(node);
+        setTimeout(() => node.remove(), 3800);
+    }
+}
+function addTimeline(type, title, msg) {
+    const t = new Date();
+    state.timeline.unshift({
+        type,
+        time: t.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
+        title,
+        msg
+    });
+    state.timeline = state.timeline.slice(0, 7);
+    renderTimeline();
+}
+
+/* FORENSICS */
+function analyzeEvidence() {
+    const e = document.getElementById('evidence').value.trim();
+    if (!e) {
+        pushLog('forensicTerminal', 'root@cyberos:~$ no evidence provided', 'yellow');
+        return;
+    }
+    const risk = /token|password|admin|ip|leak|phish|malware|shell/i.test(e) ? 'HIGH' : /log|packet|hash|trace/i.test(e) ? 'MEDIUM' : 'LOW';
+    const tone = risk === 'HIGH' ? 'red' : risk === 'MEDIUM' ? 'yellow' : 'green';
+    pushLog('forensicTerminal', `root@cyberos:~$ artifact analysed: ${e}`, 'cyan');
+    pushLog('forensicTerminal', `root@cyberos:~$ suspicion level: ${risk}`, tone);
+    addTimeline(risk === 'HIGH' ? 'bad' : risk === 'MEDIUM' ? 'warn' : '', 'Evidence analysed', `Artifact "${e}" classified as ${risk}.`);
+    state.threat += risk === 'HIGH' ? 7 : risk === 'MEDIUM' ? 3 : 1;
+    renderAll();
+    saveState();
+}
+function hashArtifact() {
+    const e = document.getElementById('evidence').value.trim() || 'empty';
+    let h = 2166136261;
+    for (let i = 0; i < e.length; i++) { h ^= e.charCodeAt(i); h = Math.imul(h, 16777619); }
+    const hash = ('0000000' + (h >>> 0).toString(16)).slice(-8);
+    pushLog('forensicTerminal', `root@cyberos:~$ hash fingerprint: ${hash}`, 'green');
+    addTimeline('', 'Fingerprint generated', `Artifact hash created for ${e}.`);
+}
+function sealEvidence() {
+    pushLog('forensicTerminal', 'root@cyberos:~$ evidence sealed and locked in vault', 'cyan');
+    addTimeline('', 'Evidence sealed', 'Chain of custody preserved.');
+    showToast('Evidence sealed.');
+}
+
+/* CONSOLE */
+function runCommand() {
+    const input = document.getElementById('cmdInput');
+    const cmd = input.value.trim().toLowerCase();
+    if (!cmd) return;
+    pushLog('consoleTerminal', `cyberos> ${cmd}`, 'cyan');
+    const responses = {
+        help: 'commands: help, status, scan, lockdown, report, clear, ping, unlock, export',
+        status: `requests=${state.total}, blocked=${state.blocked}, threat=${state.threat}`,
+        scan: 'deep scan complete: suspicious traces found in auth layer',
+        lockdown: 'network lockdown executed: all new sessions restricted',
+        report: 'incident report refreshed',
+        clear: 'terminal buffer cleared',
+        ping: 'pong from security mesh node 7',
+        unlock: 'admin override accepted: accounts unlocked',
+        export: 'report exported to summary buffer'
+    };
+    if (cmd === 'clear') {
+        clearTerminal('consoleTerminal');
+        input.value = '';
+        return;
+    }
+    const response = responses[cmd] || 'unknown command. type help.';
+    pushLog('consoleTerminal', `cyberos# ${response}`, cmd === 'unknown' ? 'red' : 'green');
+    if (cmd === 'lockdown') quarantineNetwork();
+    if (cmd === 'unlock') unlockAll();
+    if (cmd === 'report') refreshReport();
+    input.value = '';
+    renderAll();
+}
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && document.getElementById('console').classList.contains('active')) {
+        runCommand();
+    }
+});
+
+/* ADMIN */
+function unlockAll() {
+    Object.values(state.accounts).forEach(a => { a.locked = false; a.captcha = false; a.cooldown = 0; });
+    state.systemMode = 'DEFENCE MODE';
+    state.threat = Math.max(8, state.threat - 8);
+    pushLog('adminTerminal', 'root@cyberos:~$ all accounts unlocked', 'green');
+    addTimeline('', 'Accounts unlocked', 'Administrator restored access to all users.');
+    showToast('Accounts unlocked.');
+    renderAll();
+    saveState();
+}
+function quarantineNetwork() {
+    state.systemMode = 'QUARANTINE';
+    state.threat = Math.min(100, state.threat + 12);
+    state.blocked += 2;
+    pushLog('adminTerminal', 'root@cyberos:~$ network quarantined', 'red');
+    addTimeline('bad', 'Network quarantined', 'High-risk mode enabled across the mesh.');
+    showToast('Network quarantined.');
+    renderAll();
+    saveState();
+}
+function rotateKeys() {
+    state.total += 1;
+    pushLog('adminTerminal', 'root@cyberos:~$ encryption keys rotated', 'cyan');
+    addTimeline('', 'Key rotation completed', 'Session keys refreshed.');
+    showToast('Keys rotated.');
+    renderAll();
+    saveState();
+}
+function isolateHost() {
+    state.blocked += 1;
+    state.threat += 5;
+    pushLog('adminTerminal', 'root@cyberos:~$ host isolated from network', 'yellow');
+    addTimeline('warn', 'Host isolated', 'A suspicious endpoint was removed.');
+    showToast('Host isolated.');
+    renderAll();
+    saveState();
+}
+function clearAlerts() {
+    state.timeline = state.timeline.filter(ev => ev.type === '' || ev.title.includes('Successful') || ev.title.includes('Evidence'));
+    pushLog('adminTerminal', 'root@cyberos:~$ alerts cleared', 'green');
+    showToast('Alerts cleared.');
+    renderAll();
+    saveState();
+}
+function restoreDefaults() {
+    state.systemMode = 'DEFENCE MODE';
+    state.attackHeat = 24;
+    state.threat = 18;
+    state.blocked = 6;
+    state.incidents = 2;
+    state.total = 148;
+    state.accounts = {
+        admin: {fails: 0, locked: false, captcha: false, cooldown: 0},
+        user1: {fails: 1, locked: false, captcha: false, cooldown: 0},
+        guest: {fails: 0, locked: false, captcha: false, cooldown: 0}
+    };
+    state.timeline = [
+        {type:'warn', time:'08:14', title:'Suspicious login burst', msg:'Repeated login attempts detected from multiple regions.'},
+        {type:'bad', time:'08:21', title:'Attack vector escalated', msg:'Simulation shifted into distributed attack pattern.'},
+        {type:'', time:'08:29', title:'Defence layer responded', msg:'Rate limiting and CAPTCHA controls remained active.'}
+    ];
+    pushLog('adminTerminal', 'root@cyberos:~$ system restored to defaults', 'green');
+    addTimeline('', 'Defaults restored', 'Baseline security state reapplied.');
+    showToast('Defaults restored.');
+    renderAll();
+    saveState();
+}
+
+/* REPORT + AI */
+function refreshReport() {
+    pushLog('reportTerminal', 'root@cyberos:~$ report rebuilt from live telemetry', 'cyan');
+    renderReport();
+}
+function runAIReview() {
+    const verdict = state.threat < 25 ? 'The defence stack is stable and disciplined.' : state.threat < 55 ? 'The system is reacting well, but activity is rising.' : 'Containment is still working, but the incident is becoming serious.';
+    pushLog('reportTerminal', `root@cyberos:~$ ai verdict: ${verdict}`, state.threat < 25 ? 'green' : state.threat < 55 ? 'yellow' : 'red');
+    addTimeline(state.threat < 55 ? 'warn' : 'bad', 'AI review completed', verdict);
+    showToast('AI review completed.');
+}
+function exportReport() {
+    const text = [
+        'CyberOS Nexus Incident Report',
+        `Time: ${new Date().toLocaleString()}`,
+        `Total Requests: ${state.total}`,
+        `Blocked IPs: ${state.blocked}`,
+        `Threat Score: ${state.threat}`,
+        `Active Incidents: ${state.incidents}`,
+        `System Mode: ${state.systemMode}`,
+        '',
+        'Timeline:',
+        ...state.timeline.map(ev => `- ${ev.time} | ${ev.title} | ${ev.msg}`)
+    ].join('\n');
+    const blob = new Blob([text], {type:'text/plain'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'cyberos_nexus_report.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+    pushLog('reportTerminal', 'root@cyberos:~$ summary exported', 'green');
+    showToast('Report exported.');
+}
+
+/* misc */
+function addBurstLog() {
+    const lines = [
+        'network burst detected',
+        'packet surge normalized',
+        'dns anomaly mitigated',
+        'session fingerprint updated',
+        'gateway watcher emitted warning'
+    ];
+    lines.forEach((t, i) => setTimeout(() => pushLog('dashboardTerminal', `root@cyberos:~$ ${t}`, i % 2 ? 'yellow' : 'cyan'), i * 180));
+    state.threat += 2;
+    state.total += 5;
+    renderAll();
+    saveState();
+}
+function resetEverything() {
+    localStorage.removeItem('cyberos_nexus_state');
+    location.reload();
+}
+window.addEventListener('keydown', (e) => {
+    if (e.key === 'F5') {
+        e.preventDefault();
+        refreshReport();
+        showToast('Live report refreshed.');
+    }
+});
+
+boot();
+pushLog('consoleTerminal', 'cyberos> help', 'cyan');
+pushLog('consoleTerminal', 'cyberos# commands loaded. try status, scan, lockdown, report.', 'green');
+</script>
+</body>
+</html>
