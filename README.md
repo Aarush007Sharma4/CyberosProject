@@ -5,7 +5,7 @@
   <img src="https://img.shields.io/badge/CyberSecurity-Terminal%20Simulation-0f0f0f?style=for-the-badge">
 </p>
 
-CyberOS Nexus is a futuristic terminal-based cyber defence simulator built using C++.
+CyberOS Nexus is a basic terminal-based cyber defence simulator built using C++.
 
 The project simulates:
 - Authentication systems
